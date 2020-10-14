@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Rhino</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="exercise_get_ready">Get Ready</string>
+    <string name="exercise_take_a_break">Take a Break</string>
+</resources>

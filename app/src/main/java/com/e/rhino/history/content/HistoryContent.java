@@ -51,7 +51,7 @@ public class HistoryContent {
 
     public static void load() {
         if (itemList.size() == 0) {
-            String url = "https://spanish50.com/history/rss";
+            String url = "https://espdaily.com/history/rss";
             Log.i("HistoryContent", "Getting history list from rss...");
             RssReader.fetchHistoryList(url, itemList);
             Log.i("HistoryContent", "History loaded from rss, count=" + itemList.size());

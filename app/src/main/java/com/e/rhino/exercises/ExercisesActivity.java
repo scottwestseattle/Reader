@@ -206,7 +206,7 @@ public class ExercisesActivity extends AppCompatActivity  implements StartFragme
         saveUserPreferences();
 
         // save the history on the server
-        String url = "https://spanish50.com/history/add-public/";
+        String url = "https://espdaily.com/history/add-public/";
         int totalSeconds = (int) this.exercises.getTotalSeconds();
         try {
             url += URLEncoder.encode(this.programName, "utf-8") + "/";

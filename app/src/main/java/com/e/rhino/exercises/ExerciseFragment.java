@@ -152,6 +152,7 @@ public class ExerciseFragment extends Fragment {
     }
 
     private String getSecondsRemainingMessage(int seconds) {
+
         String msg = Tools.getRandomString(
                 "# seconds to go",
                 "# seconds remaining",
@@ -165,7 +166,23 @@ public class ExerciseFragment extends Fragment {
                 "There are # more seconds to go"
                 );
 
-        return msg.replace("#", (CharSequence)Integer.toString(seconds)) + ".";
+        String voiceMsg = "";
+
+        if (seconds > 60)
+        {
+            int minutes = seconds / 60;
+            seconds = seconds % minutes;
+
+            voiceMsg = Float.toString(minutes)
+                + " minutes and " + Integer.toString(seconds) + " seconds remaining.";
+        }
+        else
+        {
+            voiceMsg = msg.replace("#", (CharSequence)Integer.toString(seconds)) + ".";
+        }
+
+
+        return voiceMsg;
     }
 
     private void loadCurrent() {

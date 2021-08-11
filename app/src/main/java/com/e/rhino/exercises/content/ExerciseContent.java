@@ -19,7 +19,7 @@ public class ExerciseContent {
 
     public ExerciseContent(int exerciseId)
     {
-        String url = "https://spanish50.com/lessons/rss-reader/" + exerciseId;
+        String url = "https://espdaily.com/lessons/rss-reader/" + exerciseId;
         Log.i("parse", "Get Exercises from RSS...");
         RssReader.fetchExerciseList(url, exerciseList);
     }

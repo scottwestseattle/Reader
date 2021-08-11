@@ -3,6 +3,7 @@ package com.e.rhino.program;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +42,8 @@ public class ProgramsRecyclerViewAdapter extends RecyclerView.Adapter<ProgramsRe
         holder.mItem = mValues.get(position);
         holder.programName.setText(mValues.get(position).name);
         holder.programDescription.setText(mValues.get(position).description);
-        holder.programLayout.setBackgroundResource(ProgramContent.getBackgroundImageResourceId(mValues.get(position).imageId));
+        //holder.programLayout.setBackgroundResource(ProgramContent.getBackgroundImageResourceId(mValues.get(position).imageId));
+        holder.programLayout.setBackgroundColor(ProgramContent.getBackgroundColor(position));
 
         // show number of sessions
         int cnt = mValues.get(position).sessionCount;

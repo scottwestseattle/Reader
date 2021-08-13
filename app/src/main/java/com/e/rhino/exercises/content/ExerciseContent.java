@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.e.rhino.R;
 import com.e.rhino.RssReader;
+import com.e.rhino.Speech;
 import com.e.rhino.Tools;
 
 import java.util.ArrayList;
@@ -83,7 +84,9 @@ public class ExerciseContent {
 
     public static class Question {
         public String question;
+        public int questionLanguage = Speech.languageDefault;
         public String answer;
+        public int answerLanguage = Speech.languageDefault;
         public int uses = 0;
 
         public Question(String question) {

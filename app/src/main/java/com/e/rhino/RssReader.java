@@ -185,6 +185,7 @@ public class RssReader {
 
             List<SessionContent.SessionItem> sessionItems = new ArrayList<SessionContent.SessionItem>();
 
+            int languageId = Speech.languageDefault;
             while (event != XmlPullParser.END_DOCUMENT) {
 
                 String name = myParser.getName();
@@ -193,6 +194,16 @@ public class RssReader {
                 switch (event) {
 
                     case XmlPullParser.START_TAG:
+                        //
+                        // get the language attribute from here because attributes aren't available on end tag
+                        //
+                        String ns = myParser.getNamespace();
+                        String language = myParser.getAttributeValue(ns, "language");
+                        if (null != language && language.length() > 0) {
+                            try {
+                                languageId = Integer.parseInt(language);
+                            } catch (NumberFormatException nfe) {}
+                        }
                         break;
 
                     case XmlPullParser.TEXT:
@@ -357,16 +368,22 @@ public class RssReader {
                                 questions = new ArrayList<ExerciseContent.Question>();
 
                             questions.add(new ExerciseContent.Question(text.trim()));
+                            int size = (null == questions) ? 0 : questions.size();
+                            if (size > 0) {
+                                questions.get(size - 1).questionLanguage = languageId;
+                            }
+
                         }
                         else if (name.equals("answer")){
                             text = text.trim();
                             if (text.length() > 0) {
                                 int size = (null == questions) ? 0 : questions.size();
-                                if (size > 0)
+                                if (size > 0) {
                                     questions.get(size - 1).answer = text.trim();
+                                    questions.get(size - 1).answerLanguage = languageId;
+                                }
                             }
                         }
-
                         //
                         // skip all others
                         //

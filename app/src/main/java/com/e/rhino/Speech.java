@@ -11,10 +11,12 @@ public class Speech  {
 
     private static TextToSpeech tts = null;
     private static boolean mMuted = false;
-
     public static boolean isMuted() {
         return mMuted;
     }
+    public static final int languageEnglish = 0;
+    public static final int languageSpanish = 1;
+    public static final int languageDefault = languageSpanish;
 
     public static void setMuted(boolean muted) {
         mMuted = muted;
@@ -55,6 +57,24 @@ public class Speech  {
         });
     }
 
+    public static void setLanguage(int language)
+    {
+        String languageCode = "spa";
+        String languageCountry = "SPA";
+
+        switch (language) {
+            case languageEnglish:
+                languageCode = "eng";
+                languageCountry = "ENG";
+                break;
+            default:
+                break;
+        }
+
+        Locale loc = new Locale(languageCode, languageCountry);
+        tts.setLanguage(loc);
+    }
+
     public static void setCallback(UtteranceProgressListener progressListener)
     {
         tts.setOnUtteranceProgressListener(progressListener);
@@ -64,6 +84,20 @@ public class Speech  {
     {
         if (null != tts && !mMuted)
             tts.speak(text, queueMode, null, id);
+    }
+
+    public static void utter(CharSequence text, int queueMode, String id, int language)
+    {
+        setLanguage(language);
+        utter(text, queueMode, id);
+        setLanguage(Speech.languageDefault);
+    }
+
+    public static void speak(CharSequence text, int queueMode, int language)
+    {
+        setLanguage(language);
+        speak(text, queueMode);
+        setLanguage(Speech.languageDefault);
     }
 
     public static void speak(CharSequence text, int queueMode)

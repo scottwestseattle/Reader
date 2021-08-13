@@ -20,6 +20,10 @@ import com.e.rhino.Speech;
 import com.e.rhino.Tools;
 import com.e.rhino.exercises.content.ExerciseContent;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -41,6 +45,7 @@ public class ReaderFragment extends Fragment {
     private Handler handler = new Handler();
     private int currentQuestion = 0;
     private int questionCount = 0;
+    private ExerciseContent.Question mAnswerPending = null;
 
     private Runnable runnable = new Runnable(){
         public void run() {
@@ -52,7 +57,15 @@ public class ReaderFragment extends Fragment {
                 handler.postDelayed(runnable, second); // update in 1 second
             }
             else {
-                loadNextQuestion();
+                if (mAnswerPending != null) // even number means ask a new question{
+                {
+                    Speech.utter(mAnswerPending.answer, TextToSpeech.QUEUE_ADD, "answer", mAnswerPending.answerLanguage);
+                    mAnswerPending = null; // q and a have been spoken, finished with it
+                    setStaticName(); // show the answer
+                }
+                else {
+                    loadNextQuestion();
+                }
             }
         }
     };
@@ -116,7 +129,12 @@ public class ReaderFragment extends Fragment {
                 if (utteranceId.length() > 0)
                 {
                     if (!finished && !timerPaused)
-                        startTimer(pauseBetweenSentences); // pause between sentences
+                    {
+                        if (utteranceId.equals("question"))
+                            startTimer(pauseBetweenSentences); // pause after question
+                        else
+                            startTimer(2); // pause between questions
+                    }
                 }
             }
 
@@ -137,8 +155,6 @@ public class ReaderFragment extends Fragment {
         {
             start();
         }
-
-
     }
 
     public boolean onFabPlayPauseClicked() {
@@ -222,6 +238,7 @@ public class ReaderFragment extends Fragment {
         return -1;
     }
 
+    private LocalDateTime mStartTime;
     private void start() {
         ExercisesActivity activity = (ExercisesActivity) getActivity();
         if (null != activity) {
@@ -229,6 +246,7 @@ public class ReaderFragment extends Fragment {
                 Speech.speak("Empezando", TextToSpeech.QUEUE_ADD);
                 this.started = true;
                 activity.reset();
+                mStartTime = LocalDateTime.now(); //todo: finish plugging in elapsed time
                 loadNext();
             } else {
                 Speech.speak("Wait for exercises to finish loading...", TextToSpeech.QUEUE_ADD);
@@ -296,7 +314,7 @@ public class ReaderFragment extends Fragment {
         boolean questionFound = false;
         if (null != questions) {
             if (read(questions)) {
-                setStaticViews(activity, exerciseItem, exerciseItem.name);
+                setStaticViews(exerciseItem);
                 questionFound = true;
             }
         }
@@ -333,7 +351,13 @@ public class ReaderFragment extends Fragment {
                 }
 
                 this.pauseBetweenSentences = seconds;
-                Speech.utter(question.question, TextToSpeech.QUEUE_ADD, "reading");
+
+                if (question.answer != null) {
+                    // if there is an answer, then save for the end of the timer
+                    this.mAnswerPending = question;
+                }
+
+                Speech.utter(question.question, TextToSpeech.QUEUE_ADD, "question", question.questionLanguage);
             }
             rc = true;
         }
@@ -377,7 +401,7 @@ public class ReaderFragment extends Fragment {
             tv.setText(Integer.toString(seconds) + " seconds");
     }
 
-    private void setStaticViews(ExercisesActivity activity, ExerciseContent.ExerciseItem exerciseItem, String title)
+    private void setStaticViews(ExerciseContent.ExerciseItem exerciseItem)
     {
         //
         // set static values
@@ -387,12 +411,38 @@ public class ReaderFragment extends Fragment {
             tv.setText(exerciseItem.name );
 
         tv = this.getView().findViewById(R.id.textview_coming_up);
-        if (null != tv)
-            tv.setText(this.questionCount + " of " + exerciseItem.questions.size() + " (#" + (this.currentQuestion + 1) + ")");
+        if (null != tv) {
+            String elapsedTime = ""; //todo: finish plugging in elapsed time
+            tv.setText(this.questionCount + " of " + exerciseItem.questions.size() + " (#" + (this.currentQuestion + 1) + ")" + "  " + elapsedTime);
+        }
 
-        tv = this.getView().findViewById(R.id.textview_exercise_name);
-        if (null != tv)
-            tv.setText(exerciseItem.questions.get(this.currentQuestion).question);
+        setStaticName(exerciseItem);
+    }
+
+    private void setStaticName() {
+        ExercisesActivity activity = (ExercisesActivity) getActivity();
+        if (null == activity)
+            return;
+
+        setStaticName(activity.getCurrentExercise());
+    }
+
+    private void setStaticName(ExerciseContent.ExerciseItem exerciseItem)
+    {
+        TextView tv = this.getView().findViewById(R.id.textview_exercise_name);
+        if (null != tv) {
+            ExerciseContent.Question q = exerciseItem.questions.get(this.currentQuestion);
+            String text = "";
+            if (mAnswerPending == null) {
+                // if there's an answer, use it otherwise always show the question
+                text = (null != q.answer && q.answer.length() > 0) ? q.answer : q.question;
+            }
+            else {
+                text = q.question;
+            }
+
+            tv.setText(text);
+        }
     }
 
     private void updateTimerAudio(int seconds) {

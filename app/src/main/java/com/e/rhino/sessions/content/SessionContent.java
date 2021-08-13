@@ -34,8 +34,9 @@ public class SessionContent {
         public final String parent;
         public final int seconds;
         public final int exerciseCount;
+        public final int type;
 
-        public SessionItem(int id, String name, String description, int number, String parent, int seconds, int exerciseCount) {
+        public SessionItem(int id, String name, String description, int number, String parent, int seconds, int exerciseCount, int type) {
             this.id = id;
             this.number = number;
             this.name = name;
@@ -43,6 +44,7 @@ public class SessionContent {
             this.parent = parent;
             this.seconds = seconds;
             this.exerciseCount = exerciseCount;
+            this.type = type;
         }
 
         @Override

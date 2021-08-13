@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.e.rhino.R;
 import com.e.rhino.Speech;
+import com.e.rhino.Tools;
 import com.e.rhino.exercises.content.ExerciseContent;
 
 import java.util.Iterator;
@@ -35,7 +36,7 @@ public class ReaderFragment extends Fragment {
     private final int second = 1000; // 1 Second
     private final int countdownSeconds = 5;
     private final int nextCountdownSeconds = 3;
-    private final int pauseBetweenSentences = 7;
+    private int pauseBetweenSentences = 5;
     private final int getReadySeconds = countdownSeconds + 1;
     private Handler handler = new Handler();
     private int currentQuestion = 0;
@@ -265,10 +266,9 @@ public class ReaderFragment extends Fragment {
         }
         else {
             // end
-            Speech.speak("No hay más capítulos.", TextToSpeech.QUEUE_ADD);
-            Speech.speak("¡Bien hecho! ¡Enhorabuena!", TextToSpeech.QUEUE_ADD);
             stopTimer();
             activity.setFabPlayIcon(true);
+            loadFragment("FinishedFragment");
         }
     }
 
@@ -321,9 +321,26 @@ public class ReaderFragment extends Fragment {
             questionCount++;
             ExerciseContent.Question question = questions.get(randomIndex);
             question.uses++;
-            if (!this.timerPaused)
+            if (!this.timerPaused) {
+
+                // calculate how time will be needed to answer
+                int seconds = 3;
+                String[] words = question.question.split(" ");
+                if (words.length >= 8)
+                {
+                    seconds = words.length / 2; // use 2 words per second
+                    seconds = Tools.keepInRange(seconds, 5, 7);
+                }
+
+                this.pauseBetweenSentences = seconds;
                 Speech.utter(question.question, TextToSpeech.QUEUE_ADD, "reading");
+            }
             rc = true;
+        }
+        else
+        {
+            // finished?
+            rc = false;
         }
         return rc;
     }

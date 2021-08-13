@@ -2,6 +2,7 @@ package com.e.rhino.exercises.content;
 
 import android.util.Log;
 
+import com.e.rhino.R;
 import com.e.rhino.RssReader;
 import com.e.rhino.Tools;
 
@@ -17,9 +18,8 @@ public class ExerciseContent {
      */
     public static List<ExerciseItem> exerciseList = new ArrayList<ExerciseItem>();
 
-    public ExerciseContent(int exerciseId)
+    public ExerciseContent(String url)
     {
-        String url = "https://espdaily.com/lessons/rss-reader/" + exerciseId;
         Log.i("parse", "Get Exercises from RSS...");
         RssReader.fetchExerciseList(url, exerciseList);
     }

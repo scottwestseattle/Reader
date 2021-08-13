@@ -42,6 +42,7 @@ public class RssReader {
     static private int sessionExerciseCount = -1;
     static private int sessionSeconds = -1;
     static private String sessionParentName = "";
+    static private int sessionType = -1;
     static public final Map<Integer, SessionContent.SessionItem> sessionMap = new HashMap<Integer, SessionContent.SessionItem>();
 
     // Exercise
@@ -247,7 +248,8 @@ public class RssReader {
                                         sessionNumber,
                                         sessionParentName,
                                         sessionSeconds,
-                                        sessionExerciseCount
+                                        sessionExerciseCount,
+                                        sessionType
                                 );
 
                                 sessionItems.add(item);
@@ -283,7 +285,11 @@ public class RssReader {
                                 sessionSeconds = Integer.parseInt(text);
                             } catch(NumberFormatException nfe){}
                         }
-                        //
+                        else if(name.equals("lesson_type")){
+                            try {
+                                sessionType = Integer.parseInt(text);
+                            } catch(NumberFormatException nfe){}
+                        }                        //
                         // the 'history' block
                         //
                         else if(name.equals("history")){

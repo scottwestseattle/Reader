@@ -54,7 +54,7 @@ public class ProgramsFragment extends Fragment {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
 
-            List<ProgramItem> items = ProgramContent.programList;
+            List<ProgramItem> items = ProgramContent.getProgramList();
             int programCount = items.size();
             getActivity().setTitle("Programs: " + programCount);
 

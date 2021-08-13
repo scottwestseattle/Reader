@@ -7,16 +7,24 @@ import androidx.core.app.NotificationCompatSideChannelService;
 
 import com.e.rhino.R;
 import com.e.rhino.RssReader;
+import com.e.rhino.sessions.content.SessionContent;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ProgramContent {
 
     /**
      * The array of items from the rss feed
      */
-    public static List<ProgramItem> programList = new ArrayList<ProgramItem>();
+    private static List<ProgramItem> programList = new ArrayList<ProgramItem>();
+
+    public static List<ProgramItem> getProgramList()
+    {
+        return programList;
+    }
 
     public static int getBackgroundImageResourceId(int index) {
         int id = 0;
@@ -52,14 +60,13 @@ public class ProgramContent {
         return id;
     }
 
-    ProgramContent()
-    {
+    ProgramContent()    {
         Log.i("parse", "ProgramContent started");
     }
 
     static {
         if (programList.size() == 0) {
-            String url = "https://espdaily.com/courses/rss-reader";
+            String url = "https://espdaily.com/courses/rss-reader/";
             Log.i("ProgramContent", "Getting program list from rss...");
             RssReader.fetchProgramList(url, programList);
         }

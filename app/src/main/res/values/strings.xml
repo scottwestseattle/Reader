@@ -5,4 +5,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="exercise_get_ready">Get Ready</string>
     <string name="exercise_take_a_break">Take a Break</string>
+    <string name="rss_url_courses">https://espdaily.com/courses/rss-reader</string>
+    <string name="rss_url_favorites">https://espdaily.com/favorites/rss-reader/</string>
+    <string name="rss_url_lessons">https://espdaily.com/lessons/rss-reader/</string>
 </resources>

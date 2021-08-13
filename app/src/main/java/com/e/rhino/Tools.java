@@ -17,6 +17,33 @@ public class Tools {
         return time;
     }
 
+    public static int keepInRange(int val, int min, int max)
+    {
+        // check min
+        int rc = val;
+
+        if (val < min) // check the min
+            rc = min;
+        else if (val > max) // check the max
+            rc = max;
+
+        return rc;
+    }
+
+    public static int min(int val1, int val2)
+    {
+        int rc = (val1 < val2) ? val1 : val2;
+
+        return rc;
+    }
+
+    public static int max(int val1, int val2)
+    {
+        int rc = (val1 > val2) ? val1 : val2;
+
+        return rc;
+    }
+
     public static String getRandomString(String ... msgs)
     {
         return msgs[new Random().nextInt(msgs.length)];

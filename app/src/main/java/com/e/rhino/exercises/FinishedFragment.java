@@ -19,13 +19,7 @@ import java.util.Random;
 public class FinishedFragment extends Fragment {
 
     private static String endMsgs[] = {
-            "You killed it like a boss!",
-            "You made it your bitch!",
-            "You did it like a boss!",
-            "Boom chocka locka!",
-            "Whazzup?",
-            "Who's your daddy!",
-            "You've got that Boom Boom Pow!"
+            "No hay más capítulos. ¡Bien hecho!",
     };
 
     public FinishedFragment() {
@@ -54,8 +48,8 @@ public class FinishedFragment extends Fragment {
 
         activity.setFabPlayIcon(true);
 
-        String title = "All exercises completed!";
-        Speech.speak(title, TextToSpeech.QUEUE_ADD);
+        String title = "Se ha terminado";
+        //Speech.speak(title, TextToSpeech.QUEUE_ADD);
         TextView tvTitle = this.getView().findViewById(R.id.title);
         if (null != tvTitle)
             tvTitle.setText(title);

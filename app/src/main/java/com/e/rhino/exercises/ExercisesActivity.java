@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 
 import com.e.rhino.R;
 import com.e.rhino.RssReader;
@@ -29,10 +30,11 @@ public class ExercisesActivity extends AppCompatActivity  implements StartFragme
     private Toolbar mToolbar;
     public static ExerciseContent exercises = null;
     public int currentExerciseIndex = -1;
-    public int programId = -1;
-    public String programName = "";
-    public int sessionId = -1;
-    public String sessionName = "";
+    private int programId = -1;
+    private String programName = "";
+    private int sessionId = -1;
+    private String sessionName = "";
+    private int sessionType = -1;
 
     @Override
     public void onListFragmentInteraction(ExerciseContent.ExerciseItem exerciseItem) {
@@ -47,7 +49,11 @@ public class ExercisesActivity extends AppCompatActivity  implements StartFragme
         loadSessionInfo(getIntent());
 
         // get the data
-        exercises = new ExerciseContent(this.sessionId);
+        int urlId = (this.sessionType == 70) ? R.string.rss_url_favorites : R.string.rss_url_lessons;
+        String url = getResources().getString(urlId);
+        url += sessionId;
+
+        exercises = new ExerciseContent(url);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exercises);
@@ -116,12 +122,13 @@ public class ExercisesActivity extends AppCompatActivity  implements StartFragme
                 boolean showPlayIcon = true;
                 Fragment fragment = getActiveFragment();
 
-                if (fragment instanceof StartFragment) {
-                    end();
-                } else if (fragment instanceof ReaderFragment) {
+                if (fragment instanceof ReaderFragment) {
                     Speech.speak("Terminando...", TextToSpeech.QUEUE_FLUSH);
                     setFabPlayIcon(showPlayIcon);
                     ((ReaderFragment) fragment).onHardStop();
+                }
+                else {
+                    end();
                 }
             }
         });
@@ -156,6 +163,7 @@ public class ExercisesActivity extends AppCompatActivity  implements StartFragme
         this.programName = intent.getStringExtra("courseName");
         this.sessionId = intent.getIntExtra("sessionId", -1);
         this.sessionName = intent.getStringExtra("sessionName");
+        this.sessionType = intent.getIntExtra("sessionType", -1);
     }
 
     public void onAddSecondsButtonClick(View view) {
@@ -181,6 +189,7 @@ public class ExercisesActivity extends AppCompatActivity  implements StartFragme
                     fragment = new StartFragment();
                     break;
                 case "ReaderFragment":
+                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                     showFabButton(R.id.fabFastForward, true);
                     fragment = new ReaderFragment();
                     break;
@@ -188,7 +197,8 @@ public class ExercisesActivity extends AppCompatActivity  implements StartFragme
                     fragment = new ExerciseFragment();
                     break;
                 case "FinishedFragment":
-                    saveHistory();
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                    //saveHistory();
                     fragment = new FinishedFragment();
                     break;
                 default:
@@ -241,6 +251,7 @@ public class ExercisesActivity extends AppCompatActivity  implements StartFragme
     }
 
     public void end() {
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         finish();
         return;
     }

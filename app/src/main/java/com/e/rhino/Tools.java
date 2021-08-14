@@ -12,8 +12,9 @@ public class Tools {
 
     // format the seconds to look like: 13:10
     public static String getTimeFromSeconds(long seconds) {
-        Date dt = new Date((seconds) * 1000);
-        String time = new SimpleDateFormat("mm:ss").format(dt);
+        Date dt = new Date(seconds * 1000);
+        String pattern = (seconds > 3600) ? "hh:mm:ss" : "mm:ss";
+        String time = new SimpleDateFormat(pattern).format(dt);
         return time;
     }
 

@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
@@ -20,6 +21,10 @@ import com.e.rhino.Speech;
 import com.e.rhino.Tools;
 import com.e.rhino.exercises.content.ExerciseContent;
 
+import java.text.DateFormat;
+import java.text.FieldPosition;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -238,7 +243,8 @@ public class ReaderFragment extends Fragment {
         return -1;
     }
 
-    private LocalDateTime mStartTime;
+    private long mStartTime;
+    private String mTotalTime = "";
     private void start() {
         ExercisesActivity activity = (ExercisesActivity) getActivity();
         if (null != activity) {
@@ -246,7 +252,7 @@ public class ReaderFragment extends Fragment {
                 Speech.speak("Empezando", TextToSpeech.QUEUE_ADD);
                 this.started = true;
                 activity.reset();
-                mStartTime = LocalDateTime.now(); //todo: finish plugging in elapsed time
+                mStartTime = System.currentTimeMillis();
                 loadNext();
             } else {
                 Speech.speak("Wait for exercises to finish loading...", TextToSpeech.QUEUE_ADD);
@@ -286,8 +292,16 @@ public class ReaderFragment extends Fragment {
             // end
             stopTimer();
             activity.setFabPlayIcon(true);
+            activity.setRunTime(getElapsedTime());
+            Speech.shutup();
             loadFragment("FinishedFragment");
         }
+    }
+
+    private String getElapsedTime()
+    {
+        long seconds = (System.currentTimeMillis() - mStartTime) / 1000;
+        return Tools.getTimeFromSeconds(seconds);
     }
 
     private void resetQuestions(List<ExerciseContent.Question> questions)
@@ -412,8 +426,7 @@ public class ReaderFragment extends Fragment {
 
         tv = this.getView().findViewById(R.id.textview_coming_up);
         if (null != tv) {
-            String elapsedTime = ""; //todo: finish plugging in elapsed time
-            tv.setText(this.questionCount + " of " + exerciseItem.questions.size() + " (#" + (this.currentQuestion + 1) + ")" + "  " + elapsedTime);
+            tv.setText(this.questionCount + " of " + exerciseItem.questions.size() + " (#" + (this.currentQuestion + 1) + ")" + "  " + getElapsedTime());
         }
 
         setStaticName(exerciseItem);

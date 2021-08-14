@@ -18,12 +18,17 @@ import java.util.Random;
 
 public class FinishedFragment extends Fragment {
 
+    private String mRunTime = null;
     private static String endMsgs[] = {
             "No hay más capítulos. ¡Bien hecho!",
     };
 
     public FinishedFragment() {
         // Required empty public constructor
+    }
+
+    public FinishedFragment(String runTime) {
+        this.mRunTime = runTime;
     }
 
     @Override
@@ -49,7 +54,8 @@ public class FinishedFragment extends Fragment {
         activity.setFabPlayIcon(true);
 
         String title = "Se ha terminado";
-        //Speech.speak(title, TextToSpeech.QUEUE_ADD);
+        if (null != mRunTime)
+            title += " en " + mRunTime;
         TextView tvTitle = this.getView().findViewById(R.id.title);
         if (null != tvTitle)
             tvTitle.setText(title);

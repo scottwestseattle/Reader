@@ -35,6 +35,7 @@ public class ExercisesActivity extends AppCompatActivity  implements StartFragme
     private int sessionId = -1;
     private String sessionName = "";
     private int sessionType = -1;
+    private String mRunTime = null;
 
     @Override
     public void onListFragmentInteraction(ExerciseContent.ExerciseItem exerciseItem) {
@@ -178,6 +179,11 @@ public class ExercisesActivity extends AppCompatActivity  implements StartFragme
     {
     }
 
+    public void setRunTime(String runTime)
+    {
+        this.mRunTime = runTime;
+    }
+
     public void loadFragment(String tag) {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
@@ -199,7 +205,7 @@ public class ExercisesActivity extends AppCompatActivity  implements StartFragme
                 case "FinishedFragment":
                     getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                     //saveHistory();
-                    fragment = new FinishedFragment();
+                    fragment = new FinishedFragment(this.mRunTime);
                     break;
                 default:
                     break;
@@ -247,6 +253,7 @@ public class ExercisesActivity extends AppCompatActivity  implements StartFragme
 
     public void reset()
     {
+        this.mRunTime = null;
         this.currentExerciseIndex = -1;
     }
 

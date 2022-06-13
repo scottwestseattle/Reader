@@ -1,5 +1,7 @@
 package com.e.rhino;
 
+import android.os.Environment;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 
 import com.e.rhino.program.ProgramItem;
@@ -10,6 +12,8 @@ import com.e.rhino.sessions.content.SessionContent;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -143,6 +147,34 @@ public class RssReader {
                     // Starts the query
                     conn.connect();
                     InputStream stream = conn.getInputStream();
+
+                    ////////////////////////////////////////////////////////////
+                    ////////////////////////////////////////////////////////////
+
+                    //todo: save the XML file
+                    int totalSize = conn.getContentLength();
+                    if (totalSize > 0) { //todo: turned off because file write fails
+                        int downloadedSize = 0;
+                        byte[] buffer = new byte[1024];
+                        int bufferLength = 0;
+
+                        File folder = new File(Environment.getExternalStorageDirectory() + "/rhino");
+                        if (!folder.exists()) {
+                            folder.mkdir();
+                        }
+
+                        FileOutputStream fos = new FileOutputStream(folder + "/rhino1.xml");
+                        while ((bufferLength = stream.read(buffer)) > 0) {
+                            fos.write(buffer, 0, bufferLength);
+                            downloadedSize += bufferLength;
+                            int progress = (int) (downloadedSize * 100 / totalSize);
+                        }
+
+                        Speech.speak("File downloaded", TextToSpeech.QUEUE_ADD, Speech.languageEnglish);
+                    }
+
+                    ////////////////////////////////////////////////////////////
+                    ////////////////////////////////////////////////////////////
 
                     xmlFactoryObject = XmlPullParserFactory.newInstance();
                     XmlPullParser myparser = xmlFactoryObject.newPullParser();

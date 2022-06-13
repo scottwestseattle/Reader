@@ -21,6 +21,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Mention the service name here -->
+        <service android:name=".exercises.ReaderService"/>
+
     </application>
 
 </manifest>

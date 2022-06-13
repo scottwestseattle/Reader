@@ -9,6 +9,7 @@ import com.e.rhino.Tools;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class ExerciseContent {
 
@@ -80,6 +81,26 @@ public class ExerciseContent {
         public String toString() {
             return name;
         }
+    }
+
+    public static int getRandomIndex(List<ExerciseContent.Question> items) {
+        int ix = new Random().nextInt(items.size());
+        if (items.get(ix).uses == 0) {
+            return ix;
+        }
+
+        // find the next unused item
+        for (int i = 0; i < items.size(); i++)
+        {
+            ix++;
+            if (ix >= items.size())
+                ix = 0;
+
+            if (items.get(ix).uses == 0)
+                return ix;
+        }
+
+        return -1;
     }
 
     public static class Question {

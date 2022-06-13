@@ -1,5 +1,11 @@
 package com.e.rhino.exercises;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.Service;
+import android.content.Intent;
+import android.os.Binder;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
@@ -8,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
+import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
@@ -15,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.e.rhino.R;
 import com.e.rhino.Speech;
@@ -122,6 +130,8 @@ public class ReaderFragment extends Fragment {
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
 
+        //todo: moved to service
+        /*
         Speech.setCallback(new UtteranceProgressListener() {
             @Override
             public void onStart(String utteranceId) {
@@ -148,6 +158,7 @@ public class ReaderFragment extends Fragment {
                 // There was an error.
             }
         });
+        */
 
         if (this.started) {
             loadNext();
@@ -158,8 +169,21 @@ public class ReaderFragment extends Fragment {
         }
         else
         {
-            start();
+            // start the reader service
+            startService();
+
+            //start();
         }
+    }
+
+    private void startService() {
+        // starting the service
+        getActivity().startService(new Intent(getActivity(), ReaderService.class ) );
+    }
+
+    private void stopService() {
+        // stopping the service
+        getActivity().stopService(new Intent(getActivity(), ReaderService.class));
     }
 
     public boolean onFabPlayPauseClicked() {
@@ -223,26 +247,6 @@ public class ReaderFragment extends Fragment {
             updateTimerDisplay(secondsRemaining);
     }
 
-    private int getRandomIndex(List<ExerciseContent.Question> items) {
-        int ix = new Random().nextInt(items.size());
-        if (items.get(ix).uses == 0) {
-            return ix;
-        }
-
-        // find the next unused item
-        for (int i = 0; i < items.size(); i++)
-        {
-            ix++;
-            if (ix >= items.size())
-                ix = 0;
-
-            if (items.get(ix).uses == 0)
-                return ix;
-        }
-
-        return -1;
-    }
-
     private long mStartTime;
     private String mTotalTime = "";
     private void start() {
@@ -264,6 +268,7 @@ public class ReaderFragment extends Fragment {
     public void onHardStop() {
         this.started = false;
         this.finished = true;
+        stopService();
         stopTimer();
         loadFragment("StartFragment");
     }
@@ -347,7 +352,7 @@ public class ReaderFragment extends Fragment {
 
     private boolean read(List<ExerciseContent.Question> questions) {
         boolean rc = false;
-        int randomIndex = getRandomIndex(questions);
+        int randomIndex = ExerciseContent.getRandomIndex(questions);
         if (randomIndex >= 0) {
             currentQuestion = randomIndex;
             questionCount++;
